@@ -1,0 +1,6 @@
+{
+  "price": "9.9",
+  "pay_qr": "/static/pay_qr.png",
+  "trial_count": 0,
+  "admin_secret": "4ef87eca4d6637f158c66b390f3c1c50"
+}

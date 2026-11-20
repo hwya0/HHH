@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>马原刷题</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: #f5f5f7; color: #222; font-size: 15px; line-height: 1.6;
+    display: flex; flex-direction: column; min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+  /* 顶栏 */
+  .topbar {
+    background: linear-gradient(135deg, #b71c1c, #d32f2f);
+    color: #fff; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12); position: sticky; top: 0; z-index: 10;
+  }
+  .topbar .title { font-size: 17px; font-weight: 600; letter-spacing: 1px; }
+  .topbar .title::before { content: "★ "; }
+  .topbar .user { font-size: 13px; opacity: .92; display: flex; align-items: center; gap: 10px; }
+  .topbar .user .logout { color: #fff; border: 1px solid rgba(255,255,255,.6); border-radius: 14px; padding: 3px 10px; font-size: 12px; }
+
+  /* 主体 */
+  #main { flex: 1; padding: 14px; padding-bottom: 70px; max-width: 720px; width: 100%; margin: 0 auto; }
+
+  /* 底部 tab */
+  .tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #eee;
+    display: flex; max-width: 720px; margin: 0 auto; z-index: 20;
+  }
+  .tabbar .tab { flex: 1; text-align: center; padding: 9px 0 8px; color: #999; font-size: 12px; }
+  .tabbar .tab .ic { font-size: 20px; display: block; line-height: 1.2; }
+  .tabbar .tab.active { color: #b71c1c; font-weight: 600; }
+
+  /* 卡片 */
+  .card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 12px; }
+  .card h2 { font-size: 16px; margin-bottom: 10px; color: #b71c1c; }
+
+  /* 登录/注册/付费面板 */
+  .panel { background: #fff; border-radius: 14px; padding: 24px 20px; box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+  .panel .logo { text-align: center; font-size: 22px; font-weight: 700; color: #b71c1c; margin-bottom: 4px; }
+  .panel .sub { text-align: center; color: #888; font-size: 13px; margin-bottom: 22px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; }
+  .field input {
+    width: 100%; padding: 11px 12px; border: 1px solid #ddd; border-radius: 9px; font-size: 15px; outline: none;
+    transition: border-color .2s;
+  }
+  .field input:focus { border-color: #d32f2f; }
+  .btn {
+    display: block; width: 100%; padding: 12px; border-radius: 9px; font-size: 16px; font-weight: 600;
+    background: linear-gradient(135deg, #c62828, #e53935); color: #fff; transition: opacity .2s;
+  }
+  .btn:active { opacity: .85; }
+  .btn.ghost { background: #fff; color: #b71c1c; border: 1px solid #b71c1c; }
+  .btn.small { width: auto; padding: 7px 16px; font-size: 13px; display: inline-block; }
+  .switch { text-align: center; margin-top: 14px; font-size: 13px; color: #888; }
+  .switch b { color: #b71c1c; cursor: pointer; }
+  .err { color: #d32f2f; font-size: 13px; min-height: 18px; margin-top: 4px; }
+  .ok-msg { color: #2e7d32; font-size: 13px; min-height: 18px; margin-top: 4px; }
+
+  /* 付费面板 */
+  .pay-box { text-align: center; }
+  .pay-price { font-size: 30px; color: #b71c1c; font-weight: 700; margin: 6px 0; }
+  .pay-price small { font-size: 14px; color: #888; font-weight: 400; }
+  .qr { width: 200px; height: 200px; margin: 10px auto; border: 1px solid #eee; border-radius: 8px; background: #fafafa; display: block; }
+  .pay-tip { font-size: 12px; color: #999; margin: 6px 0 16px; }
+  .trial-note { background: #fff3e0; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #e65100; margin-bottom: 12px; text-align: center; }
+
+  /* 刷题 */
+  .q-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #ffebee; color: #c62828; }
+  .tag.ch { background: #e3f2fd; color: #1565c0; }
+  .q-index { font-size: 12px; color: #999; }
+  .q-stem { font-size: 16px; font-weight: 600; margin: 8px 0 14px; line-height: 1.6; }
+  .opt {
+    display: block; width: 100%; text-align: left; padding: 11px 13px; margin-bottom: 8px;
+    background: #fafafa; border: 1px solid #eee; border-radius: 9px; font-size: 14px; transition: all .15s;
+  }
+  .opt:active { background: #f0f0f0; }
+  .opt.sel { background: #ffebee; border-color: #e57373; color: #b71c1c; font-weight: 600; }
+  .opt.correct { background: #e8f5e9; border-color: #81c784; color: #2e7d32; font-weight: 600; }
+  .opt.wrong { background: #ffebee; border-color: #e57373; color: #c62828; }
+  .opt .letter { display: inline-block; width: 22px; font-weight: 700; }
+  .actions { display: flex; gap: 10px; margin-top: 14px; }
+  .actions .btn { flex: 1; }
+  .feedback { margin-top: 12px; padding: 10px 12px; border-radius: 9px; font-size: 13px; }
+  .feedback.right { background: #e8f5e9; color: #2e7d32; }
+  .feedback.wrong { background: #ffebee; color: #c62828; }
+  .feedback .ans { font-weight: 600; }
+  .analysis { margin-top: 10px; padding: 10px 12px; background: #fff8e1; border-radius: 9px; font-size: 13px; color: #6d4c41; line-height: 1.7; }
+  .analysis b { color: #e65100; }
+
+  /* 进度条 */
+  .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 10px 0 6px; }
+  .progress-bar > div { height: 100%; background: linear-gradient(90deg, #c62828, #e53935); transition: width .3s; }
+  .progress-text { font-size: 12px; color: #888; text-align: center; }
+
+  /* 模式切换 */
+  .mode-switch { display: flex; background: #fff; border-radius: 9px; padding: 3px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+  .mode-switch button { flex: 1; padding: 8px; font-size: 13px; border-radius: 7px; color: #666; }
+  .mode-switch button.active { background: #b71c1c; color: #fff; font-weight: 600; }
+
+  /* 统计 */
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+  .stat-box { background: #fff; border-radius: 10px; padding: 12px 6px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+  .stat-box .num { font-size: 20px; font-weight: 700; color: #b71c1c; }
+  .stat-box .lbl { font-size: 11px; color: #999; margin-top: 2px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 13px; }
+  .bar-row .name { width: 90px; color: #555; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-row .bar { flex: 1; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; }
+  .bar-row .bar > div { height: 100%; background: linear-gradient(90deg, #c62828, #e57373); }
+  .bar-row .val { width: 70px; text-align: right; color: #888; font-size: 12px; }
+
+  /* 错题列表 */
+  .wrong-item { background: #fff; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.05); cursor: pointer; }
+  .wrong-item:active { background: #fafafa; }
+  .wrong-item .wq { font-size: 14px; margin-bottom: 4px; }
+  .wrong-item .wmeta { font-size: 11px; color: #999; display: flex; gap: 10px; }
+  .empty { text-align: center; color: #bbb; padding: 40px 0; font-size: 14px; }
+
+  /* modal */
+  .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal { background: #fff; border-radius: 14px; padding: 20px; max-width: 360px; width: 100%; }
+  .modal h3 { font-size: 16px; margin-bottom: 10px; color: #b71c1c; }
+  .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,.75); color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 14px; z-index: 200; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="title">马原刷题</div>
+    <div class="user" id="userBox"></div>
+  </header>
+  <main id="main"></main>
+  <nav class="tabbar" id="tabbar">
+    <div class="tab active" data-tab="quiz"><span class="ic">📝</span>刷题</div>
+    <div class="tab" data-tab="wrong"><span class="ic">📕</span>错题本</div>
+    <div class="tab" data-tab="stats"><span class="ic">📊</span>统计</div>
+  </nav>
+</div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

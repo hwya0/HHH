@@ -1,0 +1,23 @@
+# Railway 部署配置（Dockerfile 项目）
+# Railway 会自动检测到 Dockerfile，用它构建并部署
+# 这里额外声明 persistent volume，防止容器重启丢失数据
+
+[deploy]
+# Railway 会自动读取 Dockerfile 的 CMD，这里可以不写
+# startCommand = "python serve.py"
+
+# 持久化数据卷：/app/data 目录挂载到 Railway Volume
+# 这样 users.json / progress.json 在容器重建后仍然在
+# Railway 控制台会自动给这个 mountPath 创建一个 Volume
+[[deploy.volumes]]
+name = "mayuan-data"
+mountPath = "/app/data"
+
+# 健康检查（可选，但 Railway 会在启动后检查）
+[deploy.healthcheck]
+type = "http"
+path = "/api/config"
+interval = 30
+timeout = 10
+retries = 3
+startPeriod = 15
