@@ -1,0 +1,7 @@
+
+  → Sign in with one click:
+    https://railway.com/activate?user_code=KJNM-ZDLV
+
+  → Or go to https://railway.com/activate and enter this code:
+    KJNM-ZDLV
+

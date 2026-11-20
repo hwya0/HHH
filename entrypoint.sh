@@ -1,24 +1,25 @@
 #!/bin/bash
 set -e
 
-# /app/data 里有镜像自带的 questions.json + config.json
-# /app/data/user_data 是持久化卷（空的或之前有 users.json/progress.json）
-# 需要把持久化卷里的 users.json/progress.json 链接回 /app/data/
+DATA_DIR="/app/data"
+TPL_DIR="/app/data_tpl"
 
-mkdir -p /app/data/user_data
+echo "=== Mayuan Quiz Entrypoint ==="
+echo "Volume mount path: $DATA_DIR"
 
-# 如果持久化卷里已经有 users.json，把它放回到 /app/data/
-if [ -f /app/data/user_data/users.json ]; then
-    cp /app/data/user_data/users.json /app/data/users.json
+mkdir -p "$DATA_DIR"
+
+if [ ! -f "$DATA_DIR/questions.json" ]; then
+    echo "First run: copying seed data from template..."
+    cp "$TPL_DIR/questions.json" "$DATA_DIR/questions.json"
+    cp "$TPL_DIR/config.json" "$DATA_DIR/config.json"
+    if [ -f "$TPL_DIR/users.json" ]; then
+        cp "$TPL_DIR/users.json" "$DATA_DIR/users.json"
+    fi
+    echo "Seeded questions.json + config.json to persistent volume"
 fi
 
-# 如果持久化卷里已经有 progress.json，放回到 /app/data/
-if [ -f /app/data/user_data/progress.json ]; then
-    cp /app/data/user_data/progress.json /app/data/progress.json
-fi
-
-echo "=== Starting mayuan-quiz ==="
 echo "=== DATA dir contents: ==="
-ls -la /app/data/
+ls -la "$DATA_DIR/" | head -20
 
 exec python serve.py

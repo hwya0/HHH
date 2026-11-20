@@ -3,4 +3,4 @@ healthcheck = false
 
 [[deploy.volumes]]
 name = "mayuan-data"
-mountPath = "/app/data/user_data"
+mountPath = "/app/data"

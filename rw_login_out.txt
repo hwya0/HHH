@@ -1,0 +1,7 @@
+
+  → Sign in with one click:
+    https://railway.com/activate?user_code=LDFP-TJDL
+
+  → Or go to https://railway.com/activate and enter this code:
+    LDFP-TJDL
+
