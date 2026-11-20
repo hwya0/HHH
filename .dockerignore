@@ -1,39 +1,22 @@
-# Python 缓存
 __pycache__/
-*.pyc
 *.pyo
 *.pyd
-
-# 虚拟环境（Docker 里 pip install 到容器，不用本地 venv）
 venv/
-
-# 本地调试临时文件
+tunnel.err
+tunnel.current
+tunnel.log
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
 _dis*.py
 _check_imports.py
 serve_test.py
 serve_out.txt
 serve_err.txt
 bat_debug_output.txt
-
-# Cloudflare tunnel 日志和状态
-tunnel.err
-tunnel.current
-
-# 启动脚本（Docker 里不用）
 启动.bat
-
-# Git
 .git/
 .gitignore
-
-# IDE
-.vscode/
-.idea/
-
-# 系统文件
-.DS_Store
-Thumbs.db
-
-# 用户本地测试数据（Docker 里 data/ 目录会被挂载覆盖，原始数据用镜像里的即可）
-# 注意：data/ 必须保留在镜像里（VOLUME 只声明挂载点，挂载前镜像里的数据作为初始数据）
-# 所以 data/ 不写进 .dockerignore
+data/users.json
+data/progress.json
